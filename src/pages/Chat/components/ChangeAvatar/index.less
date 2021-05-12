@@ -1,0 +1,27 @@
+.c-ca {
+    &__content {
+        margin-top: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        & > label {
+            margin-top: 10px;
+            display: flex;
+        }
+        & > label:nth-child(2n - 1) > span{
+            margin-left: 10px;
+            order: 3;
+        }
+        & > label:nth-child(2n) > span{
+            margin-right: 10px;
+        }
+    }
+    &__btns {
+        flex: 1;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        width: 100%;
+        margin-top: 30px;
+    }
+}
