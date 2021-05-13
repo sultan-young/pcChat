@@ -9,6 +9,7 @@ import userInfo from './userinfo'
 import session from './session'
 import linkman from './linkman'
 import navalidation from './novalidation'
+import chatData from './currentChatData'
 
 export default combineReducers({
     login,
@@ -16,5 +17,6 @@ export default combineReducers({
     userInfo,
     session,
     linkman,
-    navalidation
+    navalidation,
+    chatData,
 })
