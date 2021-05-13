@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { createContext } from 'react'
 import './index.css'
 import { fetchChatHistoryData, fetchContactList,queryUserInfo } from '../../common/server';
 import { Input,  Drawer } from 'antd';
@@ -9,17 +9,24 @@ import { updateUserInfoAction } from '../../redux/actions/userinfo'
 import { updateSessionAction } from '../../redux/actions/session'
 import { updateLinkmanAction } from '../../redux/actions/linkman'
 import { updateValidaAction } from '../../redux/actions/novalidation'
+import { addSyncChatDataAction, updateSyncChatDataAction } from '../../redux/actions/currentChatData'
 import FullLoading from '../../components/baseUi/FullLoading';
 import {
     ProfileOutlined,
     UserOutlined,
     TeamOutlined,
   } from '@ant-design/icons';
-import { NavLink, Route, Switch } from 'react-router-dom';
+import { NavLink, Redirect, Route, Switch } from 'react-router-dom';
 import Session from './components/session';
 import Linkman from './components/Linkman';
 import Group from './components/Group';
 import { updateSyncAvatoar } from '../../redux/actions/avatoar';
+import { getWebSecket } from '../../common/websocket'
+import moment from 'moment'
+import "moment/locale/zh-cn";
+moment.locale("zh-cn");
+
+export const converIdContext = createContext();
 
 function Chat(props) {
     const {updateUserInfoAction,
@@ -30,29 +37,38 @@ function Chat(props) {
          updateSessionAction,
          updateValidaAction,
          updateLinkmanAction,
+         currentChatData,
+         updateSyncChatDataAction,
+         addSyncChatDataAction,
     } = props;
+    const ws = new getWebSecket();
+    // chat面板时间
+    const lastLoginTime = moment((currentChatData.lastHistory || {}).date).calendar(); 
+    
     // 当前会话id
     const [currentSeleltConvId, setCurrentSeleltConvId] = React.useState([])
     // 当前会话聊天数据
-    const [chatData, setChatData] = React.useState({})
+    const [chatData, setChatData] = React.useState([])
     // 搜索框的值
     const [searchValue, setSearchValue] = React.useState('')
     // 抽屉是否显示
     const [ drawerVisible, setDrawerVisible] = React.useState(false)
     // 页面loading状态
     const [ pageStatus, setPageStatus] = React.useState(false)
-    // 当前选中的组
-    const [ selectType, setSelectType ] = React.useState('session');
-    
+    // 聊天框的值
+    const [chatValue, setChatValue] = React.useState('')
     const fetchChatData = async ()=> {
         // 获取会话联系人数据 获取当前会话聊天数据
         const [contactData, chatData, userInfo ] = await Promise.all([fetchContactList(), fetchChatHistoryData(), queryUserInfo()])
 
         const { linkManList, sessionList, noValidation, groupList = []} = contactData;
+        
         updateSessionAction(sessionList)
         updateValidaAction(noValidation)
         updateLinkmanAction(linkManList)
         setChatData(chatData)
+        // 默认选中会话中的第一个聊天人
+        setCurrentSeleltConvId((sessionList[0] || {}).converId)
         // 更新userinfo
         updateUserInfoAction(userInfo)
         updateSyncAvatoar(userInfo.avatoar, false)
@@ -66,6 +82,28 @@ function Chat(props) {
     React.useEffect(()=> {
         fetchChatData()
     }, [])
+
+    React.useEffect(()=> {
+        let currentDataObj =  chatData.find(data=> data._id === currentSeleltConvId) || {}
+        updateSyncChatDataAction(currentDataObj)
+    }, [chatData, currentSeleltConvId])
+
+    function sendMessage() {
+        ws.sendMsg({msg: chatValue,PUB_UID: currentChatUser.uid})
+        addSyncChatDataAction({
+            date: new Date().getTime(),
+            talker: currentChatUser.uid,
+            content: chatValue,
+            read: [],
+            type:'text',
+        })
+        setChatValue('')
+    }
+
+
+    const currentChatUser = React.useMemo(()=> {
+        return sessionList.find(item=> item.converId === currentSeleltConvId) || {}
+    }, [sessionList, currentSeleltConvId])
     
 
     // 更具输入内容过滤出否和的联系人。 过滤规则，最后聊天记录 || 姓名
@@ -110,32 +148,35 @@ function Chat(props) {
                         <div className="c-chat__list">
                             <ul className="people">
                                <Switch>
-                                        <Route exact path="/chatroom/session" render={()=> (
-                                            <Session contactData={filterList(sessionList)} />
-                                        )}/>
-                                        <Route path="/chatroom/linkman" render={()=> (
-                                            <Linkman noValidation={validationList} linkManList={filterList(linkManList)}/>
-                                        )}/>
-                                        <Route path="/chatroom/group" render={()=> (
-                                            <Group contactData={filterList([])}/>
-                                        )}/>
+                                   <converIdContext.Provider value={{setCurrentSeleltConvId, currentSeleltConvId}}>
+                                          <Route path="/chatroom/session" render={()=> (
+                                                <Session contactData={filterList(sessionList)} />
+                                            )}/>
+                                            <Route path="/chatroom/linkman" render={()=> (
+                                                <Linkman noValidation={validationList} linkManList={filterList(linkManList)}/>
+                                            )}/>
+                                            <Route path="/chatroom/group" render={()=> (
+                                                <Group contactData={filterList([])}/>
+                                            )}/>
+                                            <Redirect to="/chatroom/session"/>
+                                   </converIdContext.Provider>
                                 </Switch>
                             </ul>
                         </div>
                     </div>
                     <div className="right">
-                        <div className="top"><span>To: <span className="name">Dog Woofson</span></span></div>
+                        <div className="top"><span>发送给: <span className="name">{currentChatUser.nickname}</span></span></div>
                         <div className="c-chat__content">
                             {
-                                chatData[currentSeleltConvId] ? 
+                                currentChatData ? 
                                 <div className="chat active-chat" data-chat="person2">
                                     <div className="conversation-start">
-                                        <span>{chatData[currentSeleltConvId].lastTime}</span>
+                                        <span>{lastLoginTime}</span>
                                     </div>
                                     {
-                                        (chatData[currentSeleltConvId].data || []).map(item=> {
+                                        (currentChatData.history || []).map(item=> {
                                             return(
-                                                <div key={item.timestamp} className={`bubble ${item.isMySelf ? 'me' : 'you'}`}>
+                                                <div key={item.lastLoginTime} className={`bubble ${item.isMySelf ? 'me' : 'you'}`}>
                                                     {item.content}
                                                 </div>
                                             )
@@ -149,9 +190,12 @@ function Chat(props) {
                         <div className="write-wrap">
                             <div className="write">
                                 <div className="write-link attach"></div>
-                                <input type="text" />
+                                <Input
+                                 onChange={(e)=> setChatValue(e.target.value)}
+                                 value={chatValue} onCl 
+                                 onPressEnter={sendMessage}/>
                                 <div className="write-link smiley"></div>
-                                <div className="write-link send"></div>
+                                <div onClick={sendMessage} className="write-link send"></div>
                             </div>
                         </div>
                     </div>
@@ -178,6 +222,7 @@ const mapSteteToProps = (store)=> {
         sessionList: store.session,
         linkManList: store.linkman,
         validationList: store.navalidation,
+        currentChatData: store.chatData,
     }
 }
 
@@ -187,5 +232,7 @@ const mapDispatchToProps = {
     updateSyncAvatoar,
     updateLinkmanAction,
     updateValidaAction,
+    addSyncChatDataAction,
+    updateSyncChatDataAction,
 }
 export default connect(mapSteteToProps, mapDispatchToProps)(Chat)

@@ -3,22 +3,24 @@ import PropTypes from 'prop-types'
 import './index.less'
 import Avatar from '../baseUi/Avatar.js';
 import { Button, message } from 'antd';
-import { addLinkMan, respondAdd } from '../../common/server';
+import { addLinkMan } from '../../common/server';
+import { connect } from 'react-redux';
+import { respondAddPerson } from '../../redux/actions/novalidation'
+import { converIdContext } from '../../pages/Chat/index'
 import moment from 'moment'
 import "moment/locale/zh-cn";
-import { connect } from 'react-redux';
-import { deleteValidaAction } from '../../redux/actions/novalidation'
-
 moment.locale("zh-cn");
+
 function ChatItem(props) {
-    let { data = {}, type, deleteValidaAction } = props;
+    let { data = {}, type, respondAddPerson, currentChatData } = props;
     const lastLoginTime = moment(data.lastLoginTime).startOf('hour').fromNow() + '在线'
-    
+
+    // 祖组件传过来的改变ConverId的函数
+    const {setCurrentSeleltConvId, currentSeleltConvId} = React.useContext(converIdContext);
+
     // moment(date, 'YYYY-MM-DD h:mm:ss').fromNow()
     async function respondAddFn(isAgree) {
-        const {username} = data;
-        await respondAdd(username, isAgree);
-        deleteValidaAction(username)
+        respondAddPerson(data, isAgree)
     }
 
     async function onClickAddLinkMan(data) {
@@ -32,15 +34,19 @@ function ChatItem(props) {
         }
     }
 
+    function onClickItem() {
+        setCurrentSeleltConvId(data.converId)
+    }
+
     return (
-        <li className="c-item" data-chat="person2">
+        <li className={`c-item ${currentSeleltConvId === data.converId ? 'c-item_active' : ''}`} data-chat="person2" onClick={onClickItem}>
             {
                 type === 'session' ?
                 <div className="c-item__session">
                     <Avatar option={data.avatoar || {}} size='small'/>
                     <div className="c-item__session-main">
                         <span className="c-item__session-name">{data.nickname}</span>
-                        <span className="c-item__session-preview">{data.preview || '该用户说的话'}</span>
+                        <span className="c-item__session-preview">{currentChatData.lastHistory.content}</span>
                     </div>
                     <div className="c-item__session-time">{lastLoginTime}</div>
                 </div>
@@ -100,7 +106,11 @@ ChatItem.propTypes = {
     data: PropTypes.object,
 }
 
-export default connect(()=> {}, {
-    deleteValidaAction,
+export default connect((store)=> {
+    return {
+        currentChatData: store.chatData,
+    }
+}, {
+    respondAddPerson,
 })(ChatItem)
 

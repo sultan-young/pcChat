@@ -14,28 +14,27 @@
     content: '';
     background-color: var(--light);
   }
-  &:active,&:hover {
+  &_active,&:hover {
     margin-top: -1px;
     margin-left: -1px;
     padding-top: 13px;
     border: 0;
+    color: var(--white);
     background-color: var(--blue);
     width: calc(100% + 2px);
-    padding-left: calc(10% + 1px);
+    // padding-left: calc(10% + 1px);
   }
-  &.active:after,&.active:hover {
+  &_active:after,&:hover:after {
     display: none;
   }
-  &:active span,&:hover span {
+  &_active span,&:hover span {
     color: var(--white);
     background: transparent;
   }
-  &:active &__validation-btns-agree span,&:hover &__validation-btns-agree span{
-    color: #fff;
-  }
 
-  &:active &__validation-btns-refuse span,&:hover &__validation-btns-refuse span{
-    color: #000;
+  &_active .c-item__session-time,&:hover .c-item__session-time {
+    color: var(--white);
+    background: transparent;
   }
 
   &__session {
@@ -53,6 +52,7 @@
         flex-direction: column;
         flex: 1;
         justify-content: space-between;
+        padding: 7px 0px 7px 5px;
         overflow: hidden;
     }
     &-name {
@@ -72,10 +72,11 @@
       }
       
     &-time {
-        font-size: 14px;
+        font-size: 12px;
         padding: 0 0 5px 5px;
         color: var(--grey);
         display: flex;
+        word-wrap: break-word;
         align-items: center;
     }
   }
