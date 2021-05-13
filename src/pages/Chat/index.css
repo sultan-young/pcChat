@@ -70,19 +70,8 @@ body {
   display: flex;
   justify-content: space-between;
 }
-.container .left .top:after {
-  position: absolute;
-  bottom: 0;
-  display: block;
-  left: 16px;
-  right: 16px;
-  height: 1px;
-  content: '';
-  background-color: var(--light);
-}
 .container .left input {
   float: left;
-  width: 220px;
   height: 30px;
   padding: 0 15px;
   border: 1px solid var(--light);
@@ -108,9 +97,9 @@ body {
   align-items: center;
   color: #ffffff;
   border-radius: 50%;
-  span {
-    transform: scale(0.96);
-  }
+}
+.container .left .search span {
+  transform: scale(0.96);
 }
 .container .left .people {
   margin-left: -1px;
@@ -118,98 +107,6 @@ body {
   border-left: 1px solid var(--light);
   width: calc(100% + 2px);
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-.container .left .people::-webkit-scrollbar { width: 0 !important }
-.container .left .people .person {
-  position: relative;
-  width: 100%;
-  padding: 12px 16px 16px;
-  display: flex;
-  cursor: pointer;
-  background-color: var(--white);
-}
-.container .left .people .person:after {
-  position: absolute;
-  bottom: 0;
-  display: block;
-  height: 1px;
-  right: 16px;
-  left: 16px;
-  content: '';
-  background-color: var(--light);
-}
-.container .left .people .person img {
-  float: left;
-  width: 40px;
-  height: 40px;
-  margin-right: 12px;
-  border-radius: 50%;
-}
-.container .left .people .person .name {
-  font-size: 14px;
-  line-height: 22px;
-  color: var(--dark);
-  font-family: 'Source Sans Pro', sans-serif;
-  font-weight: 600;
-}
-
-.container .left .people .person .name-wrap {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  justify-content: space-between;
-  overflow: hidden;
-}
-.container .left .people .person .time {
-  font-size: 14px;
-  padding: 0 0 5px 5px;
-  color: var(--grey);
-  display: flex;
-  align-items: center;
-}
-.c-chat-add {
-  white-space: nowrap;
-  background: var(--blue);
-  color: #fff;
-  padding: 6px;
-  box-sizing: border-box;
-  border-radius: 5px;
-}
-.container .left .people .person .preview {
-  font-size: 12px;
-  display: inline-block;
-  overflow: hidden !important;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: var(--grey);
-}
-.container .left .people .person.active, .container .left .people .person:hover {
-  margin-top: -1px;
-  margin-left: -1px;
-  padding-top: 13px;
-  border: 0;
-  background-color: var(--blue);
-  width: calc(100% + 2px);
-  padding-left: calc(10% + 1px);
-}
-.container .left .people .person.active span, .container .left .people .person:hover span {
-  color: var(--white);
-  background: transparent;
-}
-.container .left .people .person.active:after, .container .left .people .person:hover:after {
-  display: none;
-}
-
-.container .left .people .person.active span, .container .left .people .person:hover .time {
-  color: var(--white);
-  background: transparent;
-}
-
-.container .left .people .person.active span, .container .left .people .person:hover .c-chat-add {
-  color: var(--blue);
-  background: #fff;
 }
 
 .container .right {
@@ -473,3 +370,55 @@ body {
 .container .ant-drawer-content-wrapper {
   width: 62.4% !important;
 }
+
+.c-chat-nav {
+  display: flex;
+  position: relative;
+  padding-bottom: 10px;
+  margin-bottom: 1px;
+}
+
+.c-chat-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.c-chat-nav-item-icon {
+  font-size: 20px !important;
+}
+
+.c-chat-nav-item span {
+  font-size: 12px;
+  margin-top: 4px;
+  cursor: pointer;
+}
+
+.c-chat-nav::after {
+  position: absolute;
+  bottom: 0;
+  display: block;
+  left: 16px;
+  right: 16px;
+  height: 1px;
+  content: '';
+  background-color: var(--light);
+}
+
+.nav_active {
+  color: var(--blue);
+}
+
+.c-chat__list {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.c-chat__list::-webkit-scrollbar { width: 0 !important }
+
+.c-chat__content {
+  flex: 1;
+}
+

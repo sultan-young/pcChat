@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { randomGenerator } from '../../../../common/util';
 import { updateAvatoarAction, updateSyncAvatoar} from '../../../../redux/actions/avatoar';
 import {  updateUserInfoAction, updateSyncUserInfo } from '../../../../redux/actions/userinfo';
-import { RedoOutlined, EditOutlined } from '@ant-design/icons';
 import ChangeAvatar from '../ChangeAvatar/index'
 import { Form, Input, Button, Radio, message } from 'antd';
 import { store } from '../../../../redux/store';
@@ -29,7 +28,6 @@ const tailLayout = {
 
 function Space(props) {
     const { option, updateAvatoarAction, onClose, userInfo } = props;
-    console.log(userInfo);
     const onFinish = async (values) => {
         const {email, radio: sex, username: nickname } = values;
         const obj = {
@@ -78,7 +76,7 @@ function Space(props) {
     }
 
     function submitOption() {
-        store.dispatch(updateSyncAvatoar(randomGenerator()))
+        store.dispatch(updateSyncAvatoar(optionCopy))
         updateAvatoarAction(optionCopy);
         onClose()
     }
@@ -92,7 +90,6 @@ function Space(props) {
         <div className="c-chat-space">
             <div className="c-chat-space__avatar">
                 <Avatar
-                 
                     avatarStyle={optionCopy.AvatarStyle}
                     topType= {optionCopy.Top}
                     accessoriesType= {optionCopy.Accessories}

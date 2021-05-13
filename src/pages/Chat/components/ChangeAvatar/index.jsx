@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react'
 import {Avatoar_Generator} from '../../../../common/global'
-import { Option } from 'antd/lib/mentions';
 import { AVATOAR_MAP, OPTION_MAP } from '../../../../common/avatoar_map';
 import {  Select, Button } from 'antd';
 import './index.less'
@@ -18,7 +17,7 @@ export default function ChangeAvatar(props) {
                         <Select value={optionCopy[item]} style={{ width: 120 }} onChange={(value)=> changeOptionFn(item, value)}>
                             {
                                Avatoar_Generator[item].map((option, index)=> (
-                                    <Option key={index} value={option}>{OPTION_MAP[option]}</Option>
+                                    <Select.Option key={index} value={option}>{OPTION_MAP[option]}</Select.Option>
                                 ))
                             }
                         </Select>
