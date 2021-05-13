@@ -6,9 +6,15 @@ import {combineReducers} from 'redux'
 import login from './login'
 import avatoar from './avatoar'
 import userInfo from './userinfo'
+import session from './session'
+import linkman from './linkman'
+import navalidation from './novalidation'
 
 export default combineReducers({
     login,
     avatoar,
     userInfo,
+    session,
+    linkman,
+    navalidation
 })

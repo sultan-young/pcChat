@@ -1,4 +1,7 @@
+import { message } from "antd";
+import { updateSyncAvatoar } from "../redux/actions/avatoar";
 import {store} from "../redux/store";
+import { randomGenerator } from "./util";
 import vq from "./vq";
 
 export async function userlogin(username, password) {
@@ -42,16 +45,21 @@ export async function queryUserInfo() {
 }
 
 export async function userRegister(username, password, email) {
+    const randomAvatar = randomGenerator();
     const result = await vq('/api/users/register', {
         data: {username,
                password,
-               email}
+               email,
+               randomAvatar,
+            }
     })
     const { user, token, success } = result;
     if(success) {
         // 客户端存储token
         localStorage.setItem('token', token)
         localStorage.setItem('uid', user._id)
+        // 生成一个随机的形象。
+        store.dispatch(updateSyncAvatoar(randomAvatar, false))
     }
     return result;
 } 
@@ -62,7 +70,7 @@ export async function fetchContactList() {
     })
 }
 
-export async function fetchChatRecordsData() {
+export async function fetchChatHistoryData() {
     return await vq('/api/chat/chatData', {
 
     })
@@ -84,4 +92,26 @@ export async function addLinkMan(username) {
             username,
         }
     })
+}
+
+/**
+ * 
+ * @param {Boolean} isAgree 
+ * @param {String} username 
+ * @returns 
+ */
+// 添加联系人
+export async function respondAdd(username, isAgree) {
+    const {success,code, message: msg} =  await vq('/api/users/respondAdd', {
+        data: {
+            isAgree,
+            username,
+        }
+    })
+    if(code === 'success') {
+        message.success(msg)
+    }else {
+        message.error(msg)
+    }
+    return success;
 }

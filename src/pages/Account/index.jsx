@@ -44,8 +44,6 @@ export default function Account(props) {
             }
             const {success, message} = await userRegister(username, password, email)
             if(success) {
-                // 生成一个随机的形象。
-                store.dispatch(updateSyncAvatoar(randomGenerator(), false))
                 info('success', '注册成功，正在前往VQ')
             }else {
                 info('error', message)

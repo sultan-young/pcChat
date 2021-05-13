@@ -47,7 +47,7 @@ function Header(props) {
             <div className="c-header__name">
                 {userInfo.nickname}
             </div>
-            <Popover placement="bottomRight" onClick={()=> setPopoverVisible(!popoverVisible)} content={menu} trigger="click" visible={popoverVisible}>
+            <Popover placement="bottomRight" content={menu}>
                 <div className="c-header__more">
                     <li></li>
                     <li></li>

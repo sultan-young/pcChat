@@ -1,7 +1,7 @@
 import { message } from "antd"
 import { updateAvatoar } from "../../common/server"
 
-export const updateAvatoarAction = (option)=> ({type: 'change', option})
+export const updateAvatoarAction = (option)=> ({type: 'changeAvatoar', option})
 export const updateSyncAvatoar = (option, showMsg = true)=> {
     return async dispatch=> {
         const result = await updateAvatoar(option)

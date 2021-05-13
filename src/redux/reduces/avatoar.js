@@ -1,7 +1,7 @@
 const avatoar = (prevState = {}, action)=> {
     const {type, option = {}} = action;
     switch (type) {
-        case 'change':
+        case 'changeAvatoar':
             let newState = {
                 ...prevState,
                 ...option,
