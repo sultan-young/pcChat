@@ -1,4 +1,7 @@
-import { addChatDataAction } from "../redux/actions/currentChatData";
+import { syncAppendConverAction, syncUpdateHistoryAction } from "../redux/actions/currentChatData";
+import { addLinkmanAction } from "../redux/actions/linkman";
+import { asyncAddValidaList } from "../redux/actions/novalidation";
+import { addSessionAction } from "../redux/actions/session";
 import { store } from "../redux/store";
 
 let ws = null;
@@ -8,10 +11,7 @@ function getWebSecket() {
     if(ws) return ws;
     ws = new WebSocket('ws://127.0.0.1:8889')
 
-    console.log(ws);
     const SUB_UID = localStorage.getItem('uid');
-
-    console.log(ws);
 
     ws.onopen = (()=> {
         ws.sendMsg({
@@ -19,20 +19,40 @@ function getWebSecket() {
         })
     })
 
+    ws.onclose = ()=> {
+        console.log('客户端离线了');
+    }
+
     ws.onmessage = ((msg)=> {
-        const { data } = msg;
-        store.dispatch(addChatDataAction(JSON.parse(data)))
+        const { data: wsData } = msg;
+        const parseData = JSON.parse(wsData);
+        const {type, data} = parseData;
+        console.log(parseData);
+
+        if(type === 'session') {
+            store.dispatch(syncUpdateHistoryAction(data))
+        }else if(type === 'linkmanRequest') {
+            store.dispatch(asyncAddValidaList(data))
+        } else if(type === 'linkmanResponse') {
+            const {userinfo, history, converId} = data;
+            store.dispatch(addLinkmanAction({...userinfo, converId}))
+            store.dispatch(addSessionAction({...userinfo, converId}))
+            store.dispatch(syncAppendConverAction(history))
+        }
+       
     })
 
     ws.sendMsg = (option) =>{
-        const { msg, type = 'pub', PUB_UID} = option;
+        const { msg, type = 'pub', PUB_UID, converId } = option;
         ws.send(JSON.stringify({
             SUB_UID,
             PUB_UID,
             msg,
             type,
+            converId,
         }))
     }
+
     return ws;
 }
 

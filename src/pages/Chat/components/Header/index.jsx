@@ -3,7 +3,7 @@ import { Popover } from 'antd';
 import './index.less'
 import {store} from '../../../../redux/store';
 import { connect } from 'react-redux';
-import Avatar from 'avataaars';
+import Avatar from '../../../../components/baseUi/Avatar.js';
 
 function Header(props) {
     const [popoverVisible, setPopoverVisible] = React.useState(false)
@@ -27,22 +27,8 @@ function Header(props) {
     }
     return (
         <div className="c-header">
-            <div className="c-header__avatar">
-                <Avatar
-                        avatarStyle={option.AvatarStyle}
-                        topType= {option.Top}
-                        accessoriesType= {option.Accessories}
-                        hairColor= {option.HairColor}
-                        facialHairType={option.FacialHair}
-                        facialHairColor= {option.FacialHairColor}
-                        clotheType= {option.Cloth}
-                        clotheColor= {option.ClothColor}
-                        eyeType= {option.Eyes}
-                        eyebrowType= {option.Eyebrow}
-                        mouthType= {option.Mouth}
-                        skinColor= {option.Skin} 
-                        graphicType={option.GraphicType}
-                    />
+            <div onClick={onTabPerson} className="c-header__avatar">
+                <Avatar option={option} size="small"/>
             </div>
             <div className="c-header__name">
                 {userInfo.nickname}
