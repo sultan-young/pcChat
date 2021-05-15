@@ -4,6 +4,16 @@ import {store} from "../redux/store";
 import { randomGenerator } from "./util";
 import vq from "./vq";
 
+// 设置用户是否在线
+export async function setUserIsOnLine(isOnLine) {
+    return await vq('/api/users/setUserOnline', {
+        data: {
+            isOnLine,
+        }
+    })
+}
+
+
 export async function userlogin(username, password) {
     const result = await vq('/api/users/login', {
         data: {
@@ -14,8 +24,8 @@ export async function userlogin(username, password) {
     const { uid, token } =  result;
     // 客户端存储token
     localStorage.setItem('token', token)
-    store.dispatch({type: 'login'})
     localStorage.setItem('uid', uid)
+    store.dispatch({type: 'login'})
     return result;
 }
 
@@ -40,8 +50,10 @@ export async function updateUserInfo(info) {
 
 // 修改用户信息
 export async function queryUserInfo() {
-    return await vq('/api/users/queryUser', {
+     const result = await vq('/api/users/queryUser', {
     })
+    localStorage.setItem('uid', result.uid);
+    return result;
 }
 
 export async function userRegister(username, password, email) {
@@ -102,7 +114,7 @@ export async function addLinkMan(username) {
  */
 // 添加联系人
 export async function respondAdd(username, isAgree) {
-    const {success,code, message: msg} =  await vq('/api/users/respondAdd', {
+    const {success,code, message: msg, converId, history} =  await vq('/api/users/respondAdd', {
         data: {
             isAgree,
             username,
@@ -113,5 +125,8 @@ export async function respondAdd(username, isAgree) {
     }else {
         message.error(msg)
     }
-    return success;
+    return {
+        converId,
+        history,
+    };
 }

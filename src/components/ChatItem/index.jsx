@@ -6,18 +6,21 @@ import { Button, message } from 'antd';
 import { addLinkMan } from '../../common/server';
 import { connect } from 'react-redux';
 import { respondAddPerson } from '../../redux/actions/novalidation'
-import { converIdContext } from '../../pages/Chat/index'
+import { updateCurrentConverId } from '../../redux/actions/converId'
 import moment from 'moment'
 import "moment/locale/zh-cn";
 moment.locale("zh-cn");
 
 function ChatItem(props) {
-    let { data = {}, type, respondAddPerson, currentChatData } = props;
+    let { 
+        data = {}, 
+        type,
+        respondAddPerson, 
+        chatData, 
+        isSelected, 
+        updateCurrentConverId 
+    } = props;
     const lastLoginTime = moment(data.lastLoginTime).startOf('hour').fromNow() + '在线'
-
-    // 祖组件传过来的改变ConverId的函数
-    const {setCurrentSeleltConvId, currentSeleltConvId} = React.useContext(converIdContext);
-
     // moment(date, 'YYYY-MM-DD h:mm:ss').fromNow()
     async function respondAddFn(isAgree) {
         respondAddPerson(data, isAgree)
@@ -35,20 +38,28 @@ function ChatItem(props) {
     }
 
     function onClickItem() {
-        setCurrentSeleltConvId(data.converId)
+        if(type === 'linkman') {
+            return;
+        }
+        updateCurrentConverId(data.converId)
     }
 
+    const currentChatData = React.useMemo(()=> {
+        let _chatData = chatData.find(item=> item._id === data.converId) || {}
+        return (_chatData.lastHistory || {}).content;
+    }, [chatData, data])
+
     return (
-        <li className={`c-item ${currentSeleltConvId === data.converId ? 'c-item_active' : ''}`} data-chat="person2" onClick={onClickItem}>
+        <li className={`c-item ${isSelected ? 'c-item_active' : ''}`} data-chat="person2" onClick={onClickItem}>
             {
                 type === 'session' ?
                 <div className="c-item__session">
                     <Avatar option={data.avatoar || {}} size='small'/>
                     <div className="c-item__session-main">
                         <span className="c-item__session-name">{data.nickname}</span>
-                        <span className="c-item__session-preview">{currentChatData.lastHistory.content}</span>
+                        <span className="c-item__session-preview">{currentChatData}</span>
                     </div>
-                    <div className="c-item__session-time">{lastLoginTime}</div>
+                    <div className="c-item__session-time">{data.isOnLine ? '在线' : lastLoginTime}</div>
                 </div>
                 :
                 null
@@ -59,7 +70,7 @@ function ChatItem(props) {
                     <Avatar option={data.avatoar || {}} size='small'/>
                     <div className="c-item__session-main">
                         <span className="c-item__session-name">{data.nickname}</span>
-                        <span className="c-item__session-preview">{lastLoginTime}</span>
+                        <span className="c-item__session-preview">{data.isOnLine ? '在线' : lastLoginTime}</span>
                         </div>
                         <div className="c-item__list-add" onClick={()=> onClickAddLinkMan(data)}><span>添加</span></div>
                     </div>
@@ -90,7 +101,7 @@ function ChatItem(props) {
                     <Avatar option={data.avatoar || {}}/>
                     <div className="c-item__session-main">
                         <span className="c-item__session-name">{data.nickname}</span>
-                        {/* <span className="c-item__session-preview">{data.preview}</span> */}
+                        <span className="c-item__session-preview">{data.signature}</span>
                     </div>
                     {/* <div className="c-item__session-time">{data.time}</div> */}
                 </div>
@@ -104,13 +115,16 @@ function ChatItem(props) {
 ChatItem.propTypes = {
     type: PropTypes.string,
     data: PropTypes.object,
+    isSelected: PropTypes.bool,
 }
 
 export default connect((store)=> {
     return {
-        currentChatData: store.chatData,
+        chatData: store.chatData,
+        converId: store.converId,
     }
 }, {
     respondAddPerson,
+    updateCurrentConverId,
 })(ChatItem)
 

@@ -9,7 +9,7 @@ const persistConfig = {
     key: 'root',
     storage,
     // blacklist: ['navigation'] // navigation不会被存入缓存中，其他会，适用于少部分数据需要实时更新
-    whitelist: ['userInfo', 'login'] // 适用于大多数数据并不会实时从后台拿数据
+    whitelist: ['userInfo', 'login', 'converId', 'chatData'] // 适用于大多数数据并不会实时从后台拿数据
 }
 
 const persistedReducer = persistReducer(persistConfig, reducers)

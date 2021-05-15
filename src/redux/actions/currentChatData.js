@@ -1,26 +1,39 @@
-const UID = localStorage.getItem('uid');
 
-export const addChatDataAction = (data)=> ({type: 'addCurrentChatData', data})
-export const updateChatDataAction = (data)=> ({type: 'updateCurrentChatData', data})
-export const addSyncChatDataAction = (data)=> {
+export const appendConverAction = (data)=> ({type: 'appendNewConver', data})
+export const updateChatDataAction = (data)=> ({type: 'updateChatData', data})
+export const updateHistoryAction = (data)=> ({type: 'updateOneHistory', data})
+
+// 向数组里的history追加一个新的记录
+export const syncAppendConverAction = (data)=> {
+    const UID = localStorage.getItem('uid');
     data.isMySelf = data.talker === UID;
     return async dispatch=> {
-        console.log(data, 11111);
-        dispatch(addChatDataAction(data))
+        dispatch(appendConverAction(data))
     }
 }
 
-export const updateSyncChatDataAction = (data)=> {
-    const mapCurrentChatList = ((data.history) || []).map(item=> ({
+// 更新聊天记录并自动识别发送者和接受者
+export const syncUpdateChatDataAction = (data)=> {
+    const UID = localStorage.getItem('uid');
+    const mapData = data.map(item=> ({
         ...item,
-        isMySelf:item.talker === UID,
+        history: (item.history || []).map(cover=> ({
+            ...cover,
+            isMySelf: cover.talker === UID
+        }))
     }))
-    
-    data.history = mapCurrentChatList;
-    let lastHistory = data.lastHistory || {};
-    lastHistory.isMySelf = lastHistory.talker === UID;
     return async dispatch=> {
-        dispatch(updateChatDataAction(data))
+        dispatch(updateChatDataAction(mapData))
+    }
+}
+
+export const syncUpdateHistoryAction = (data)=> {
+    const UID = localStorage.getItem('uid');
+    return async dispatch=> {
+        dispatch(updateHistoryAction({
+            converObj: {...data, isMySelf: data.talker === UID, lastHistory: data},
+            converId: data.converId,
+        }))
     }
 }
 

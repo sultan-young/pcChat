@@ -113,6 +113,7 @@ body {
   position: relative;
   width: 62.4%;
   height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -133,12 +134,11 @@ body {
 }
 .container .right .chat {
   position: relative;
-  display: none;
+  height: 100%;
   overflow: hidden;
-  padding: 40px 35px 40px;
+  padding: 40px 35px 10px;
   border-width: 1px 1px 1px 0;
   border-color: var(--light);
-  height: calc(100% - 48px);
   justify-content: flex-end;
   flex-direction: column;
 }
@@ -151,43 +151,43 @@ body {
 .container .right .chat.active-chat .bubble {
   transition-timing-function: cubic-bezier(0.4, -0.04, 1, 1);
 }
-.container .right .chat.active-chat .bubble:nth-of-type(1) {
+.container .right .chat.active-chat .bubble:nth-last-of-type(10) {
   -webkit-animation-duration: 0.15s;
           animation-duration: 0.15s;
 }
-.container .right .chat.active-chat .bubble:nth-of-type(2) {
+.container .right .chat.active-chat .bubble:nth-last-of-type(9) {
   -webkit-animation-duration: 0.3s;
           animation-duration: 0.3s;
 }
-.container .right .chat.active-chat .bubble:nth-of-type(3) {
+.container .right .chat.active-chat .bubble:nth-last-of-type(8) {
   -webkit-animation-duration: 0.45s;
           animation-duration: 0.45s;
 }
-.container .right .chat.active-chat .bubble:nth-of-type(4) {
+.container .right .chat.active-chat .bubble:nth-last-of-type(7) {
   -webkit-animation-duration: 0.6s;
           animation-duration: 0.6s;
 }
-.container .right .chat.active-chat .bubble:nth-of-type(5) {
+.container .right .chat.active-chat .bubble:nth-last-of-type(6) {
   -webkit-animation-duration: 0.75s;
           animation-duration: 0.75s;
 }
-.container .right .chat.active-chat .bubble:nth-of-type(6) {
+.container .right .chat.active-chat .bubble:nth-last-of-type(5) {
   -webkit-animation-duration: 0.9s;
           animation-duration: 0.9s;
 }
-.container .right .chat.active-chat .bubble:nth-of-type(7) {
+.container .right .chat.active-chat .bubble:nth-last-of-type(4) {
   -webkit-animation-duration: 1.05s;
           animation-duration: 1.05s;
 }
-.container .right .chat.active-chat .bubble:nth-of-type(8) {
+.container .right .chat.active-chat .bubble:nth-last-of-type(3) {
   -webkit-animation-duration: 1.2s;
           animation-duration: 1.2s;
 }
-.container .right .chat.active-chat .bubble:nth-of-type(9) {
+.container .right .chat.active-chat .bubble:nth-last-of-type(2) {
   -webkit-animation-duration: 1.35s;
           animation-duration: 1.35s;
 }
-.container .right .chat.active-chat .bubble:nth-of-type(10) {
+.container .right .chat.active-chat .bubble:nth-last-of-type(1) {
   -webkit-animation-duration: 1.5s;
           animation-duration: 1.5s;
 }
@@ -420,5 +420,7 @@ body {
 
 .c-chat__content {
   flex: 1;
+  overflow: hidden;
+  position: relative;
 }
 

@@ -1,5 +1,4 @@
-import React from 'react'
-import Avatar from 'avataaars';
+import React, { Fragment } from 'react'
 import './index.less'
 import { connect } from 'react-redux';
 import { randomGenerator } from '../../../../common/util';
@@ -8,6 +7,9 @@ import {  updateUserInfoAction, updateSyncUserInfo } from '../../../../redux/act
 import ChangeAvatar from '../ChangeAvatar/index'
 import { Form, Input, Button, Radio, message } from 'antd';
 import { store } from '../../../../redux/store';
+import PropTypes from 'prop-types'
+import Home from '../../../../components/Home';
+import Avatar from '../../../../components/baseUi/Avatar.js';
 
 const layout = {
   labelCol: {
@@ -27,17 +29,21 @@ const tailLayout = {
 
 
 function Space(props) {
-    const { option, updateAvatoarAction, onClose, userInfo } = props;
+    const { updateAvatoarAction, onClose, userInfo, type = 'home' } = props;
+    const { avatoar: option } = userInfo;
+    
     const onFinish = async (values) => {
-        const {email, radio: sex, username: nickname } = values;
+        const {email, radio: sex, username: nickname, signature } = values;
         const obj = {
             email,
             sex,
             nickname,
+            signature,
         }
         if(!email) delete obj.email;
         if(!sex) delete obj.radio;
         if(!nickname) delete obj.nickname;
+        if(!signature) delete obj.signature;
         store.dispatch(updateSyncUserInfo(obj))
         onClose()
       };
@@ -87,94 +93,94 @@ function Space(props) {
     }
 
     return (
-        <div className="c-chat-space">
-            <div className="c-chat-space__avatar">
-                <Avatar
-                    avatarStyle={optionCopy.AvatarStyle}
-                    topType= {optionCopy.Top}
-                    accessoriesType= {optionCopy.Accessories}
-                    hairColor= {optionCopy.HairColor}
-                    facialHairType={optionCopy.FacialHair}
-                    facialHairColor= {optionCopy.FacialHairColor}
-                    clotheType= {optionCopy.Cloth}
-                    clotheColor= {optionCopy.ClothColor}
-                    eyeType= {optionCopy.Eyes}
-                    eyebrowType= {optionCopy.Eyebrow}
-                    mouthType= {optionCopy.Mouth}
-                    skinColor= {optionCopy.Skin} 
-                    graphicType={optionCopy.GraphicType}
-                />
-                {
-                    showAvatorOption ? 
-                    <Button type="link" onClick={randomGeneratorAvator} size={20} className="c-chat-space__avatar-reset">
-                       随机形象
-                    </Button>
-                    :  
-                    <Button type="link" onClick={()=> setShowAvatorOption(true)}  size={20} className="c-chat-space__avatar-edit">
-                       编辑形象
-                    </Button>
-                }
-            </div>
-            <div className="c-chat-space__ca">
-                {
-                    showAvatorOption ?
-                    <ChangeAvatar 
-                    optionCopy={optionCopy}
-                    resetOption={resetOption} 
-                    submitOption={submitOption} 
-                    changeOptionFn={changeOptionFn}
-                    backFn={back} />
-                    :
-                    <div className="c-chat-space__form">
-                        <Form
-                        {...layout}
-                        name="basic"
-                        initialValues={{
-                            'username': userInfo.nickname,
-                            'email': userInfo.email,
-                            radio: userInfo.sex,
-                          }}
-                        onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
-                        >
-                        <Form.Item
-                            label="昵称"
-                            name="username"
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="邮箱"
-                            name="email"
-                            rules={[{ type: 'email',message: '不是有效邮箱' }]}
-                            >
-                            <Input/>
-                        </Form.Item>
-
-                        <Form.Item name="radio" label="性别">
-                            <Radio.Group>
-                                <Radio value="1">男</Radio>
-                                <Radio value="2">女</Radio>
-                            </Radio.Group>
-                        </Form.Item>
-                        <Form.Item {...tailLayout}>
-                            <Button type="primary" htmlType="submit">
-                                提交修改
+        <Fragment>
+           {
+               type === 'update' ?
+               <div className="c-chat-space">
+                  <div className="c-chat-space__avatar">
+                        <Avatar option={optionCopy || {}} size="large"/>
+                        {
+                            type === 'update' ? 
+                            showAvatorOption ? 
+                            <Button type="link" onClick={randomGeneratorAvator} size={20} className="c-chat-space__avatar-reset">
+                            随机形象
                             </Button>
-                        </Form.Item>
-                        </Form>
+                            :  
+                            <Button type="link" onClick={()=> setShowAvatorOption(true)}  size={20} className="c-chat-space__avatar-edit">
+                            编辑形象
+                            </Button>
+                            :
+                            null
+                        }
                     </div>
-                }
-            </div>
-        </div>
+                  <div className="c-chat-space__ca">
+                    {
+                        showAvatorOption ?
+                        <ChangeAvatar 
+                        optionCopy={optionCopy}
+                        resetOption={resetOption} 
+                        submitOption={submitOption} 
+                        changeOptionFn={changeOptionFn}
+                        backFn={back} />
+                        :
+                        <div className="c-chat-space__form">
+                            <Form
+                            {...layout}
+                            name="basic"
+                            initialValues={{
+                                 username: userInfo.nickname,
+                                 email: userInfo.email,
+                                 radio: userInfo.sex,
+                                 signature: userInfo.signature,
+                            }}
+                            onFinish={onFinish}
+                            onFinishFailed={onFinishFailed}
+                            >
+                            <Form.Item
+                                label="昵称"
+                                name="username"
+                            >
+                                <Input />
+                            </Form.Item>
+                            <Form.Item
+                                label="邮箱"
+                                name="email"
+                                rules={[{ type: 'email',message: '不是有效邮箱' }]}
+                                >
+                                <Input/>
+                            </Form.Item>
+                            <Form.Item
+                                label="个性签名"
+                                name="signature"
+                                >
+                                <Input.TextArea />
+                            </Form.Item>
+                            <Form.Item name="radio" label="性别">
+                                <Radio.Group>
+                                    <Radio value="1">男</Radio>
+                                    <Radio value="2">女</Radio>
+                                </Radio.Group>
+                            </Form.Item>
+                            <Form.Item {...tailLayout}>
+                                <Button type="primary" htmlType="submit">
+                                    提交修改
+                                </Button>
+                            </Form.Item>
+                            </Form>
+                    
+                        </div>
+                        }
+                    </div>
+               </div>
+               :
+               <Home userInfo={userInfo} option={option || {}}/>
+                 }
+        </Fragment>
     )
 }
 
 const mapStateToProps = (store)=> {
     return {
-        option: store.avatoar,
-        userInfo: store.userInfo,
     }
 }
 
@@ -192,6 +198,13 @@ const mapDispatchToProps = {
 //         }
 //     }
 // }
+
+Space.propTypes = {
+    type: PropTypes.string,
+    onClose: PropTypes.func,
+    userInfo: PropTypes.object,
+}
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Space)
 
