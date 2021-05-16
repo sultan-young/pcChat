@@ -45,6 +45,7 @@ export default function Account(props) {
             const {success, message} = await userRegister(username, password, email)
             if(success) {
                 info('success', '注册成功，正在前往VQ')
+                props.history.push('/chatroom')
             }else {
                 info('error', message)
             }

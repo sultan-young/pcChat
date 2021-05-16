@@ -25,12 +25,13 @@ function ChatPanel(props) {
         converId,
         syncUpdateHistoryAction,
         currentChatUser,
-     } = props
+        nickName,
+     } = props;
+
      const ws = new getWebSecket();
 
     // chat面板时间
     const lastLoginTime = moment((currentChatData.lastHistory || {}).date).calendar(); 
-
 
     // 聊天框的值
     const [chatValue, setChatValue] = React.useState('')
@@ -52,14 +53,27 @@ function ChatPanel(props) {
     
     function sendMessage() {
         if(!chatValue) return;
+        const { type } = currentChatData;
         const UID = localStorage.getItem('uid');
-        ws.sendMsg({
-            msg: chatValue,
-            PUB_UID: currentChatUser.uid, 
-            SUB_UID: UID,
-            converId, 
-            type: 'text'
-        })
+
+        if(type === 'group') {
+            ws.sendGroup({
+                msg: chatValue,
+                SUB_UID: UID,
+                converId, 
+                members: currentChatData.members,
+                type: 'text',
+                talkerName: nickName,
+            })
+        }else {
+            ws.sendMsg({
+                msg: chatValue,
+                PUB_UID: currentChatUser.uid, 
+                SUB_UID: UID,
+                converId, 
+                type: 'text'
+            })
+        }
         syncUpdateHistoryAction({
             date: new Date().getTime(),
             talker: UID,
@@ -76,7 +90,14 @@ function ChatPanel(props) {
 
     return (
         <Fragment>
-            <div className="top"><span>发送给: <span className="name">{currentChatUser.nickname}</span></span></div>
+            <div className="top">
+                {
+                    currentChatData.type === "group" ? 
+                    <span>{currentChatData.groupName}</span>
+                    :
+                    <span>与{currentChatUser.nickname}交谈中</span>
+                }
+            </div>
             <div className="c-chat__content">
                 {
                     isShowDown ?
@@ -94,8 +115,14 @@ function ChatPanel(props) {
                     {
                    (currentChatData.history || []).map(item=> {
                         return(
-                            <div key={item.date} className={`bubble ${item.isMySelf ? 'me' : 'you'}`}>
-                                {item.content}
+                            <div key={item.date} className={`c-cp__wrap bubble ${item.isMySelf ? 'c-cp__wrap_me' : 'c-cp__wrap_you'}`}>
+                                {
+                                    currentChatData.type === 'group' && !item.isMySelf?
+                                    <div className="c-cp__name">{item.talkerName || '匿名用户'}</div>
+                                    :
+                                    null
+                                }
+                                <div className={`c-cp__item_chat ${item.isMySelf ? 'c-cp__item_me' : 'c-cp__item_you'}`}>{item.content}</div>
                             </div>
                         )
                     })
@@ -119,6 +146,7 @@ function ChatPanel(props) {
 
 export default connect(store=> ({
     converId: store.converId,
+    nickName: store.userInfo.nickname,
 }), {
     syncUpdateHistoryAction,
 })(ChatPanel)

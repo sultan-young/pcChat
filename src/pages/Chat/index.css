@@ -69,6 +69,7 @@ body {
   padding: 10px 16px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 .container .left input {
   float: left;
@@ -78,6 +79,16 @@ body {
   background-color: #eceff1;
   border-radius: 4px;
   font-weight: 400;
+  margin-right: 10px;
+}
+.container .left .top > span {
+  color: var(--black);
+  width: 20px;
+  height: 20px;
+}
+.container .left .top > span svg {
+  width: 100%;
+  height: 100%;
 }
 .container .left input:focus {
   outline: none;
@@ -148,46 +159,47 @@ body {
   flex: 1;
 }
 .container .right .chat.active-chat::-webkit-scrollbar { width: 0 !important }
-.container .right .chat.active-chat .bubble {
+
+.bubble {
   transition-timing-function: cubic-bezier(0.4, -0.04, 1, 1);
 }
-.container .right .chat.active-chat .bubble:nth-last-of-type(10) {
+.bubble:nth-last-of-type(10) {
   -webkit-animation-duration: 0.15s;
           animation-duration: 0.15s;
 }
-.container .right .chat.active-chat .bubble:nth-last-of-type(9) {
+.bubble:nth-last-of-type(9) {
   -webkit-animation-duration: 0.3s;
           animation-duration: 0.3s;
 }
-.container .right .chat.active-chat .bubble:nth-last-of-type(8) {
+.bubble:nth-last-of-type(8) {
   -webkit-animation-duration: 0.45s;
           animation-duration: 0.45s;
 }
-.container .right .chat.active-chat .bubble:nth-last-of-type(7) {
+.bubble:nth-last-of-type(7) {
   -webkit-animation-duration: 0.6s;
           animation-duration: 0.6s;
 }
-.container .right .chat.active-chat .bubble:nth-last-of-type(6) {
+.bubble:nth-last-of-type(6) {
   -webkit-animation-duration: 0.75s;
           animation-duration: 0.75s;
 }
-.container .right .chat.active-chat .bubble:nth-last-of-type(5) {
+.bubble:nth-last-of-type(5) {
   -webkit-animation-duration: 0.9s;
           animation-duration: 0.9s;
 }
-.container .right .chat.active-chat .bubble:nth-last-of-type(4) {
+.bubble:nth-last-of-type(4) {
   -webkit-animation-duration: 1.05s;
           animation-duration: 1.05s;
 }
-.container .right .chat.active-chat .bubble:nth-last-of-type(3) {
+.bubble:nth-last-of-type(3) {
   -webkit-animation-duration: 1.2s;
           animation-duration: 1.2s;
 }
-.container .right .chat.active-chat .bubble:nth-last-of-type(2) {
+.bubble:nth-last-of-type(2) {
   -webkit-animation-duration: 1.35s;
           animation-duration: 1.35s;
 }
-.container .right .chat.active-chat .bubble:nth-last-of-type(1) {
+.bubble:nth-last-of-type(1) {
   -webkit-animation-duration: 1.5s;
           animation-duration: 1.5s;
 }
@@ -250,48 +262,72 @@ body {
   background-repeat: no-repeat;
   background-position: center;
 }
-.container .right .bubble {
+.c-cp__item_chat{
   font-size: 16px;
   position: relative;
-  display: inline-block;
-  clear: both;
   margin-bottom: 8px;
   padding: 13px 14px;
   vertical-align: top;
   border-radius: 5px;
+  z-index: 10;
 }
-.container .right .bubble:before {
+.c-cp__wrap .c-cp__item_chat:before {
   position: absolute;
-  top: 19px;
+  top: 14px;
   display: block;
   width: 8px;
   height: 6px;
+  background-color: var(--blue);
+  z-index: 1;
   content: '\00a0';
   -webkit-transform: rotate(29deg) skew(-35deg);
-          transform: rotate(29deg) skew(-35deg);
+  transform: rotate(29deg) skew(-35deg);
 }
-.container .right .bubble.you {
-  float: left;
+.c-cp__wrap {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+.c-cp__wrap_me {
+  align-items: flex-end;
+  -webkit-animation-name: slideFromRight;
+  animation-name: slideFromRight;
+}
+.c-cp__wrap_you {
+  align-items: flex-start;
+  -webkit-animation-name: slideFromLeft;
+  animation-name: slideFromLeft;
+}
+.c-cp__name {
+  font-size: 12px;
+  color: var(--grey);
+  margin-bottom: 5px;
+}
+.c-cp__item_me {
+  color: var(--dark);
+  background-color: #eceff1;
+  align-self: flex-end;
+
+}
+.c-cp__item_you {
   color: var(--white);
   background-color: var(--blue);
   align-self: flex-start;
-  -webkit-animation-name: slideFromLeft;
-          animation-name: slideFromLeft;
 }
-.container .right .bubble.you:before {
-  left: -3px;
+.container .right .bubble.you {
+  align-self: flex-start;
+  float: left;
+}
+.container .right .c-cp__item_you:before {
+  left: -4px;
   background-color: var(--blue);
 }
 .container .right .bubble.me {
   float: right;
-  color: var(--dark);
-  background-color: #eceff1;
   align-self: flex-end;
-  -webkit-animation-name: slideFromRight;
-          animation-name: slideFromRight;
 }
-.container .right .bubble.me:before {
-  right: -3px;
+.container .right .c-cp__item_me:before {
+  right: -4px;
   background-color: #eceff1;
 }
 .container .right .conversation-start {

@@ -27,8 +27,6 @@ function getWebSecket() {
         const { data: wsData } = msg;
         const parseData = JSON.parse(wsData);
         const {type, data} = parseData;
-        console.log(parseData);
-
         if(type === 'session') {
             store.dispatch(syncUpdateHistoryAction(data))
         }else if(type === 'linkmanRequest') {
@@ -51,6 +49,19 @@ function getWebSecket() {
             type,
             converId,
         }))
+    }
+
+    ws.sendGroup = (option)=> {
+        const { msg, type = 'pub', converId, members, talkerName } = option;
+        ws.send(JSON.stringify({
+            SUB_UID,
+            PUB_UID: members,
+            msg,
+            type,
+            converId,
+            talkerName,
+        }))
+        console.log(option);
     }
 
     return ws;

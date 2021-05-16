@@ -1,12 +1,11 @@
 import React, { Fragment, useContext } from 'react'
 import { UserAddOutlined } from '@ant-design/icons';
 import './index.less'
-import { Modal, Input, message } from 'antd';
+import { message } from 'antd';
 import {  queryLinkMan } from '../../../../common/server';
 import ChatItem from '../../../../components/ChatItem';
 import { chatContext } from '../../../../common/context';
-
-const { Search } = Input;
+import ChatModel from '../../../../components/Model';
 
 function Linkman(props) {
     const { linkManList = [], noValidation = [] } = props;
@@ -68,36 +67,20 @@ function Linkman(props) {
             {
             _linkManData.map((item, index)=> { 
                 return (
-                    <div onClick={()=> onClickItem(index)}>
+                    <div key={item.username} onClick={()=> onClickItem(index)}>
                         <ChatItem isSelected={item.isSelected} key={item.username} type="linkman" data={item}></ChatItem>
                     </div>
                 )
             })
             }
-            <Modal title="Basic Modal" 
-                visible={isModalVisible} 
-                onCancel={handleCancel}
-                keyboard={true}
+            <ChatModel
+                isModalVisible={isModalVisible}
+                handleCancel={handleCancel}
+                queryList={queryList}
+                onSearch={onSearch}
                 title='添加新的联系人'
-                wrapClassName="c-lm__model"
-            >
-                <div className="c-lm__model-search">
-                    <Search
-                    placeholder="查找联系人"
-                    allowClear
-                    enterButton="查找"
-                    size="large"
-                    onSearch={(value)=> onSearch(value)}
-                    />
-                </div>
-                <div className="c-lm__model-linkman">
-                    {
-                        queryList.map(item=> (
-                            <ChatItem key={item.username} type="search" data={item}/>
-                        ))
-                    }
-                </div>
-            </Modal>
+                type="search"
+            />
         </Fragment>
     )
 }
