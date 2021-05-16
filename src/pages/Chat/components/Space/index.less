@@ -1,0 +1,39 @@
+.c-chat-space {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    &__avatar {
+        cursor: pointer;
+        width: 100px;
+        height: 100px;
+        position: relative;
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+        &-reset {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            transform: translateX(50%);
+            width: 26px;
+            height: 26px;
+        }
+        &-edit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            transform: translateX(50%);
+            width: 26px;
+            height: 26px;
+        }
+    }
+    &__ca {
+        flex: 1;
+    }
+    &__form {
+        margin-top: 30px;
+    }
+}

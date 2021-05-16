@@ -1,0 +1,42 @@
+.c-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px 0 16px;
+    &__avatar {
+        width: 50px;
+        height: 50px;
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+    &__name {
+        flex: 1;
+        padding-left: 10px;
+    }
+    &__more {
+        display: flex;
+        cursor: pointer;
+        padding: 10px 0 10px 10px;
+        li {
+            background-color: #333;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            margin-left: 4px;
+        }
+        &-menu {
+            cursor: pointer;
+            p:hover {
+                color: #111;
+                transform: scale(1.1);
+            }
+            p {
+                line-height: 26px;
+            }
+        }
+    }
+}
+
+.ant-popover-inner-content {
+}
