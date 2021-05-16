@@ -11,11 +11,13 @@ import { updateLinkmanAction } from '../../redux/actions/linkman'
 import { updateValidaAction } from '../../redux/actions/novalidation'
 import { updateCurrentConverId } from '../../redux/actions/converId'
 import { syncUpdateChatDataAction } from '../../redux/actions/currentChatData'
+import { updateGroupAction } from '../../redux/actions/group'
 import FullLoading from '../../components/baseUi/FullLoading';
 import {
     ProfileOutlined,
     UserOutlined,
     TeamOutlined,
+    UsergroupAddOutlined
   } from '@ant-design/icons';
 import { NavLink, Redirect, Route, Switch } from 'react-router-dom';
 import Session from './components/session';
@@ -40,6 +42,8 @@ function Chat(props) {
          syncUpdateChatDataAction,
          updateCurrentConverId,
          userInfo,
+         groupList,
+         updateGroupAction,
     } = props;
     
     // 搜索框的值
@@ -57,7 +61,6 @@ function Chat(props) {
         // 获取会话联系人数据 获取当前会话聊天数据
         const [contactData, chatData, userInfo ] = await Promise.all([fetchContactList(), fetchChatHistoryData(), queryUserInfo()])
         const { linkManList, sessionList, noValidation, groupList = []} = contactData;
-        console.log(noValidation);
         // 更新userinfo
         updateUserInfoAction(userInfo)
         // 更新当前会话列表
@@ -66,6 +69,14 @@ function Chat(props) {
         updateValidaAction(noValidation)
         // 更新联系人
         updateLinkmanAction(linkManList)
+        // 更新群组信息
+        const mapGroupList = chatData.filter(item=> item.type === "group")
+        .map(item=> ({
+            groupName:item.groupName, 
+            converId: item._id, 
+            size: (item.members || []).length
+        }))
+        updateGroupAction(mapGroupList)
         // 将当前历史记录全部存入redux
         syncUpdateChatDataAction(chatData)
         // 默认选中会话中的第一个聊天人
@@ -103,11 +114,14 @@ function Chat(props) {
     }, [sessionList, converId])
     
 
-    // 更具输入内容过滤出否和的联系人。 过滤规则，最后聊天记录 || 姓名
-    function filterList(dataList) {
+    // 根据输入内容过滤出否和的联系人。 过滤规则，最后聊天记录 || 姓名
+    function filterList(dataList = []) {
         const result = dataList.filter(item=> {
-            const { nickname, preview } = item;
-            return nickname.includes(searchValue) || !searchValue || (preview || '').includes(searchValue)
+            const { nickname = '', preview = '', groupName = '' } = item;
+            return nickname.includes(searchValue) || 
+            !searchValue || 
+            preview.includes(searchValue) ||
+            groupName.includes(searchValue)
         });
         return result;
     }
@@ -137,9 +151,9 @@ function Chat(props) {
                                <UserOutlined className="c-chat-nav-item-icon" />
                                <span>联系人</span>
                             </NavLink>
-                            <NavLink to="/chatroom/group" activeClassName="nav_active" className="c-chat-nav-item">
+                            <NavLink onClick={onClickSession} to="/chatroom/group" activeClassName="nav_active" className="c-chat-nav-item">
                                 <TeamOutlined className="c-chat-nav-item-icon" />
-                                <span>群组</span>
+                                <span>群聊</span>
                             </NavLink>
                         </div>
                         <div className="c-chat__list">
@@ -153,7 +167,7 @@ function Chat(props) {
                                             <Linkman noValidation={validationList} linkManList={filterList(linkManList)}/>
                                         )}/>
                                         <Route path="/chatroom/group" render={()=> (
-                                            <Group contactData={filterList([])}/>
+                                            <Group contactData={filterList(groupList)} linkManList={filterList(linkManList)}/>
                                         )}/>
                                         <Redirect to="/chatroom/session"/>
                                     </Switch>
@@ -199,6 +213,7 @@ const mapSteteToProps = (store)=> {
         chatData: store.chatData,
         converId: store.converId,
         userInfo: store.userInfo,
+        groupList: store.group,
     }
 }
 
@@ -210,5 +225,6 @@ const mapDispatchToProps = {
     updateValidaAction,
     syncUpdateChatDataAction,
     updateCurrentConverId,
+    updateGroupAction,
 }
 export default connect(mapSteteToProps, mapDispatchToProps)(Chat)

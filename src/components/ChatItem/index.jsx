@@ -7,6 +7,7 @@ import { addLinkMan } from '../../common/server';
 import { connect } from 'react-redux';
 import { respondAddPerson } from '../../redux/actions/novalidation'
 import { updateCurrentConverId } from '../../redux/actions/converId'
+import { Checkbox } from 'antd';
 import moment from 'moment'
 import "moment/locale/zh-cn";
 moment.locale("zh-cn");
@@ -38,10 +39,9 @@ function ChatItem(props) {
     }
 
     function onClickItem() {
-        if(type === 'linkman') {
-            return;
+        if(type === 'session') {
+            updateCurrentConverId(data.converId)
         }
-        updateCurrentConverId(data.converId)
     }
 
     const currentChatData = React.useMemo(()=> {
@@ -73,6 +73,21 @@ function ChatItem(props) {
                         <span className="c-item__session-preview">{data.isOnLine ? '在线' : lastLoginTime}</span>
                         </div>
                         <div className="c-item__list-add" onClick={()=> onClickAddLinkMan(data)}><span>添加</span></div>
+                    </div>
+                    :
+                null
+            }
+            {
+                type === 'group' ?
+                <div className="c-item__session">
+                    <Avatar option={data.avatoar || {}} size='small'/>
+                    <div className="c-item__session-main">
+                        <span className="c-item__session-name">{data.nickname}</span>
+                        <span className="c-item__session-preview">{data.isOnLine ? '在线' : lastLoginTime}</span>
+                        </div>
+                        <div className="c-item__group-checkbox">
+                          <Checkbox checked={data.checked} onChange={()=>{}}></Checkbox>
+                        </div>
                     </div>
                     :
                 null

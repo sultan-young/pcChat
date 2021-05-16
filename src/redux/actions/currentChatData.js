@@ -5,16 +5,31 @@ export const updateHistoryAction = (data)=> ({type: 'updateOneHistory', data})
 
 // 向数组里的history追加一个新的记录
 export const syncAppendConverAction = (data)=> {
+
     const UID = localStorage.getItem('uid');
-    data.isMySelf = data.talker === UID;
+
+    const history = (data.history || []).map(cover=> ({
+        ...cover,
+        isMySelf: cover.talker === UID
+    }))
+    const lastHistory = {
+        ...data.lastHistory,
+        isMySelf: (data.lastHistory || {}).talker === UID,
+    }
+    
     return async dispatch=> {
-        dispatch(appendConverAction(data))
+        dispatch(appendConverAction({
+            ...data,
+            history,
+            lastHistory,
+        }))
     }
 }
 
 // 更新聊天记录并自动识别发送者和接受者
 export const syncUpdateChatDataAction = (data)=> {
     const UID = localStorage.getItem('uid');
+
     const mapData = data.map(item=> ({
         ...item,
         history: (item.history || []).map(cover=> ({

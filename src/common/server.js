@@ -106,6 +106,18 @@ export async function addLinkMan(username) {
     })
 }
 
+
+// 拉群聊
+export async function createGroup(usersList) {
+    return await vq('/api/chat/createGroup', {
+        data: {
+            usersList,
+            nickname: store.getState().userInfo.nickname,
+        }
+    })
+}
+
+
 /**
  * 
  * @param {Boolean} isAgree 

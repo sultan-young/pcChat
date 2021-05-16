@@ -14,7 +14,6 @@ export const respondAddPerson = (data, isAgree = false)=> {
     return async dispatch=> {
         const { username } = data;
         const {converId, history} =await respondAdd(username, isAgree);
-        console.log(converId, history);
         if(isAgree) {
             dispatch(addLinkmanAction({...data, converId}))
             dispatch(addSessionAction({...data, converId}))

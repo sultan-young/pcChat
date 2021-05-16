@@ -9,7 +9,7 @@ function Session(props) {
              {
                 contactData.map(item=> {
                     return (
-                        <div>
+                        <div key={item.username}>
                           <ChatItem isSelected={converId === item.converId} key={item.username} type="session" data={item}></ChatItem>
                         </div>
                     )
