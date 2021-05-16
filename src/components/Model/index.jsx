@@ -14,7 +14,7 @@ function ChatModel(props) {
         title,
         type,
         onTabItem,
-        submit = ()=> {},
+        submit = ()=> {console.log(123123)},
     } = props;
     const [inputValue, setInputValue] = React.useState('')
 

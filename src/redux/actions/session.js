@@ -1,6 +1,3 @@
-import { message } from "antd"
-import { updateAvatoar } from "../../common/server"
-
 export const updateSessionAction = (sessionList)=> ({type: 'updateSession', data: sessionList})
 export const deleteSessionAction = (username)=> ({type: 'deleteSession', data: username})
 export const addSessionAction = (sessionObj)=> ({type: 'addSession', data: sessionObj})

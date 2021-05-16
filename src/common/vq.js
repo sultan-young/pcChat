@@ -4,14 +4,18 @@ import { message } from 'antd';
 const vq  = axios.create({
     method: 'post',
     timeout: 3000,
+    baseURL : process.env.NODE_ENV === 'production' ? 'http://localhost:7777' : 'http://localhost:3000'
 })
 
-// http request 拦截器
+// http request 拦截器 
 vq.interceptors.request.use(
     config => {
         const token = localStorage.getItem('token')
         const uid = localStorage.getItem('uid')
-
+        console.log(process.env.NODE_ENV);
+        if(process.env.NODE_ENV === 'production') {
+            config.url = config.url.replace(/\/api/,''); 
+        }
         if (token) { // 判断是否存在token，如果存在的话，则每个http header都加上token
             config.headers.authorization = token  //请求头加上token
         }

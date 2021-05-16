@@ -15,6 +15,34 @@ import { SmileTwoTone,
 import  './index.less'
 import { connect } from 'react-redux';
 import { updateCurrentConverId } from '../../../../redux/actions/converId';
+import { message } from 'antd';
+
+
+function randomIcon(converId) {
+    const index = converId.slice(-1);
+    switch (index) {
+        case '1':
+        return <SmileTwoTone/>;
+        case '2':
+        return <HeartTwoTone/>;
+        case '3':
+        return <CheckCircleTwoTone/>;
+        case '4':
+        return <BankTwoTone/>;
+        case '5':
+        return <CarTwoTone/>;
+        case '6':
+        return <CrownTwoTone/>;
+        case '7':
+        return <CompassTwoTone/>;
+        case '8':
+        return <BulbTwoTone/>;
+        case '9':
+        return <StarTwoTone/>;     
+        default:
+        return <SmileTwoTone/>;
+    }
+}
 
 function Group(props) {
     const { contactData = [], 
@@ -48,41 +76,21 @@ function Group(props) {
         }))
     }
 
-    function randomIcon(converId) {
-        const index = converId.slice(-1);
-        switch (index) {
-            case '1':
-            return <SmileTwoTone/>;
-            case '2':
-            return <HeartTwoTone/>;
-            case '3':
-            return <CheckCircleTwoTone/>;
-            case '4':
-            return <BankTwoTone/>;
-            case '5':
-            return <CarTwoTone/>;
-            case '6':
-            return <CrownTwoTone/>;
-            case '7':
-            return <CompassTwoTone/>;
-            case '8':
-            return <BulbTwoTone/>;
-            case '9':
-            return <StarTwoTone/>;     
-            default:
-            return <SmileTwoTone/>;
-        }
-    }
-
     function onClickItem(item) {
         updateCurrentConverId(item.converId)
     }
 
     async function submit() {
         const currentUidList = mapList.filter(item=> item.checked).map(item=> item.uid)
-        if(!currentUidList.length) return;
-        const result = await createGroup(currentUidList)
-        console.log(result);
+        if(!currentUidList.length) {
+            setIsModalVisible(false)
+            return;
+        }else if(currentUidList.length < 3){
+            message.info('群聊需要至少勾选三位联系人')
+            return;
+        };
+        await createGroup(currentUidList)
+        setIsModalVisible(false)
     }
 
     return (
@@ -118,7 +126,9 @@ function Group(props) {
 }
 
 export default connect(()=>{
-
+    return {
+        
+    }
 },{
     updateCurrentConverId,
 })(Group)

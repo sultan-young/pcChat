@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { BrowserRouter, Route, Switch, Redirect} from 'react-router-dom'
+import { HashRouter, Route, Switch, Redirect} from 'react-router-dom'
 import Account from '../pages/Account'
 import Chat from '../pages/Chat'
 import PrivateRoute from './PrivateRoute '
@@ -7,7 +7,7 @@ import PrivateRoute from './PrivateRoute '
 export default class RouterPage extends Component {
     render() {
         return (
-            <BrowserRouter>
+            <HashRouter>
                 <Switch>
                     <Route path='/account' component={Account}/>
                     {/* 当PrivateRoute组件被switch包裹的时候，只有路径匹配对了之后，才会执行组件内代码，
@@ -17,7 +17,7 @@ export default class RouterPage extends Component {
                     <PrivateRoute path='/chatroom' component={Chat}/>
                     <Redirect to='/account'/>
                 </Switch>
-            </BrowserRouter>
+            </HashRouter>
         )
     }
 }

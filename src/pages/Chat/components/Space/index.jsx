@@ -63,13 +63,6 @@ function Space(props) {
         setOptionCopy(randomGenerator())
     }
 
-    function changeAvatarFn(key, value) {
-        updateAvatoarAction({
-            ...option,
-            [key]: value,
-        })
-    }
-
     function changeOptionFn(key, value) {
         setOptionCopy({
             ...optionCopy,

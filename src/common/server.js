@@ -1,5 +1,7 @@
 import { message } from "antd";
+import { addGroupAction } from "../redux/actions/group";
 import { updateSyncAvatoar } from "../redux/actions/avatoar";
+import { syncAppendConverAction } from "../redux/actions/currentChatData";
 import {store} from "../redux/store";
 import { randomGenerator } from "./util";
 import vq from "./vq";
@@ -109,12 +111,25 @@ export async function addLinkMan(username) {
 
 // 拉群聊
 export async function createGroup(usersList) {
-    return await vq('/api/chat/createGroup', {
+    const {success, message: msg, resultObj} =  await vq('/api/chat/createGroup', {
         data: {
             usersList,
             nickname: store.getState().userInfo.nickname,
         }
     })
+    if(success) {
+        const {groupName, _id, members = []} = resultObj;
+        store.dispatch(addGroupAction({
+            groupName,
+            converId: _id,
+            size: members.length,
+        }))
+        store.dispatch(syncAppendConverAction(resultObj))
+        message.success(msg)
+    }else {
+        message.error(msg)
+    }
+    return success;
 }
 
 
@@ -126,7 +141,7 @@ export async function createGroup(usersList) {
  */
 // 添加联系人
 export async function respondAdd(username, isAgree) {
-    const {success,code, message: msg, converId, history} =  await vq('/api/users/respondAdd', {
+    const { code, message: msg, converId, history} =  await vq('/api/users/respondAdd', {
         data: {
             isAgree,
             username,
