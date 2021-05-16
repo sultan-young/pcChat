@@ -4,9 +4,6 @@ import LOGO from '../../assets/LOGO.png'
 import   '../../common/global.js'
 import { message, Input  } from 'antd';
 import { userlogin, userRegister } from '../../common/server';
-import { randomGenerator } from '../../common/util';
-import { store } from '../../redux/store';
-import { updateSyncAvatoar } from '../../redux/actions/avatoar';
 
 export default function Account(props) {
     const [username, setUsername] = React.useState('')

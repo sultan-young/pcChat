@@ -1,6 +1,6 @@
 import React from 'react'
 import './index.css'
-import { fetchChatHistoryData, fetchContactList,queryUserInfo, setUserIsOnLine } from '../../common/server';
+import { fetchChatHistoryData, fetchContactList,queryUserInfo } from '../../common/server';
 import { Input,  Drawer } from 'antd';
 import Header from './components/Header';
 import Space from './components/Space/index';
@@ -17,7 +17,6 @@ import {
     ProfileOutlined,
     UserOutlined,
     TeamOutlined,
-    UsergroupAddOutlined
   } from '@ant-design/icons';
 import { NavLink, Redirect, Route, Switch } from 'react-router-dom';
 import Session from './components/session';
@@ -60,7 +59,7 @@ function Chat(props) {
     const fetchChatData = async ()=> {
         // 获取会话联系人数据 获取当前会话聊天数据
         const [contactData, chatData, userInfo ] = await Promise.all([fetchContactList(), fetchChatHistoryData(), queryUserInfo()])
-        const { linkManList, sessionList, noValidation, groupList = []} = contactData;
+        const { linkManList, sessionList, noValidation } = contactData;
         // 更新userinfo
         updateUserInfoAction(userInfo)
         // 更新当前会话列表

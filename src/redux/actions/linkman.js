@@ -1,6 +1,3 @@
-import { message } from "antd"
-import { updateAvatoar } from "../../common/server"
-
 export const updateLinkmanAction = (linkManList)=> ({type: 'updateLinkMan', data: linkManList})
 export const deleteLinkmanAction = (username)=> ({type: 'deleteLinkMan', data: username})
 export const addLinkmanAction = (linkManObj)=> ({type: 'addLinkMan', data: linkManObj})

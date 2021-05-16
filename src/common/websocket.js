@@ -9,7 +9,7 @@ let ws = null;
 // 此处使用了单例模式，每次new getWebSecket 都返回同一个实例
 function getWebSecket() {
     if(ws) return ws;
-    ws = new WebSocket('ws://127.0.0.1:8889')
+    ws = new WebSocket('ws://127.0.0.1:7779')
 
     const SUB_UID = localStorage.getItem('uid');
 
